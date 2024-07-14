@@ -87,17 +87,28 @@ class Publisher(Node):
             msg = self.msg_maker(points)
             self.pub.publish(msg)
     def msg_maker(self,points):
+        scan = np.zeros((points.shape[0],), dtype=[
+                    ('x', np.float32),
+                    ('y', np.float32),
+                    ('z', np.float32),
+                    ('label', np.uint8),
+                    ('rgb', np.uint32),
+                ])
+        scan['x'] = points[:,0].astype(np.float32)
+        scan['y'] = points[:,1].astype(np.float32)
+        scan['z'] = points[:,2].astype(np.float32)
+        scan['label'] = points[:,4].astype(np.uint8)
+        scan['rgb'] = points[:,5].astype(np.uint32)
         header = Header()
         header.stamp = Clock().now().to_msg()
         header.frame_id = "velodyne"
-        fields = [
-            PointField(name='x',  offset=0, datatype=PointField.FLOAT32, count = 1),
+        fields =[PointField(name='x',  offset=0, datatype=PointField.FLOAT32, count = 1),
             PointField(name='y',  offset=4, datatype=PointField.FLOAT32, count = 1),
             PointField(name='z',  offset=8, datatype=PointField.FLOAT32, count = 1),
-            PointField(name='intensity',  offset=12, datatype=PointField.FLOAT32, count = 1),
-            PointField(name='label',  offset=16, datatype=PointField.FLOAT32, count = 1),
-            PointField(name='rgb',  offset=20, datatype=PointField.FLOAT32, count = 1)]
-        msg = point_cloud2.create_cloud(header, fields, points)
+            PointField(name='label', offset=12, datatype=PointField.UINT8, count = 1),
+            PointField(name='rgb', offset=13, datatype=PointField.UINT32, count = 1),
+            ]
+        msg = point_cloud2.create_cloud(header, fields, scan)
         return msg
 
 def listener_runner(dataset_config,grid_size, p):
