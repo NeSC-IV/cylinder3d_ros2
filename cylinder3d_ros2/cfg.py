@@ -4,7 +4,7 @@ Parameters of cylinder3d_ros2
 
 pointcloud_topic = "/velodyne_points"
 sem_num = 1 # Simultaneous inference of the number of point cloud frames, 2 in orin paper
-publish_topic = '/sem_points'
+publish_topic = '/label_points'
 yaml_file = "/config/semantickitti32_run.yaml" # The path of the configuration file
 pc_colors = {
                 0: 0x000000,
